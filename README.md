@@ -32,9 +32,10 @@
 	<img src="https://img.shields.io/badge/-javascript-F1E05A?style=flat&logo=javascript&logoColor=black">
 	<br />
 	<br />
-	<img src="https://img.shields.io/badge/mongodb-11AA50?style=flat&logo=mongodb&logoColor=white">
+	<img src="https://img.shields.io/badge/postgresql-336791?style=flat&logo=postgresql&logoColor=white">
 	<img src="https://img.shields.io/badge/sqlserver-CC2927?style=flat&logo=databricks&logoColor=white">
 	<img src="https://img.shields.io/badge/mysql-00618A?style=flat&logo=mysql&logoColor=white">
+	<img src="https://img.shields.io/badge/mongodb-11AA50?style=flat&logo=mongodb&logoColor=white">
 	<br />
 	<br />
 	<img src="https://img.shields.io/badge/pandas-150458?style=flat&logo=pandas&logoColor=white">
