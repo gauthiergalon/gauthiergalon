@@ -4,7 +4,7 @@
 <hr>
 <pre>
 ・ my name is Gauthier
-・ 21yo french student
+・ 22yo french student
 ・ studying at 42 Paris
 ・ based in Montpellier
 </pre>
