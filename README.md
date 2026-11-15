@@ -1,58 +1,7 @@
-<h3 align="center">
-	welcome to my profile
-</h3>
-<hr>
-<pre>
-・ my name is Gauthier
-・ 22yo french student
-・ studying at 42 Paris
-・ based in Montpellier
-</pre>
-<h4>
-	⠀⠀skills
-</h4>
-<blockquote>
-	<img src="https://img.shields.io/badge/c-555555?style=flat&logo=c&logoColor=white">
-	<img src="https://img.shields.io/badge/c%2B%2B-F34B7D?style=flat&logo=c%2B%2B&logoColor=white">
-	<img src="https://img.shields.io/badge/c%23-89E051?style=flat&logo=c%2B%2B&&logoColor=black">
-	<img src="https://img.shields.io/badge/rust-DEA584?style=flat&logo=rust&logoColor=333333">
-	<img src="https://img.shields.io/badge/python-3572A5?style=flat&logo=python&logoColor=white">
-	<img src="https://img.shields.io/badge/php-4D5D95?style=flat&logo=php&logoColor=white">
-	<br />
-	<br />
-	<img src="https://img.shields.io/badge/linux-FCC624?style=flat&logo=linux&logoColor=black">
-	<img src="https://img.shields.io/badge/shell-89E051?style=flat&logo=gnu-bash&logoColor=black">
-	<img src="https://img.shields.io/badge/docker-384D54?style=flat&logo=docker&logoColor=white">
-	<img src="https://img.shields.io/badge/kubernetes-326Ce5?style=flat&logo=kubernetes&logoColor=white">
-	<img src="https://img.shields.io/badge/git-E44C30?style=flat&logo=git&logoColor=white">
-	<br />
-	<br />
-	<img src="https://img.shields.io/badge/-html-E34C26?style=flat&logo=html5&logoColor=white">
-	<img src="https://img.shields.io/badge/-css-563D7C?style=flat&logo=css">
-	<img src="https://img.shields.io/badge/-javascript-F1E05A?style=flat&logo=javascript&logoColor=black">
-	<br />
-	<br />
-	<img src="https://img.shields.io/badge/postgresql-336791?style=flat&logo=postgresql&logoColor=white">
-	<img src="https://img.shields.io/badge/sqlserver-CC2927?style=flat&logo=databricks&logoColor=white">
-	<img src="https://img.shields.io/badge/mysql-00618A?style=flat&logo=mysql&logoColor=white">
-	<img src="https://img.shields.io/badge/mongodb-11AA50?style=flat&logo=mongodb&logoColor=white">
-	<br />
-	<br />
-	<img src="https://img.shields.io/badge/pandas-150458?style=flat&logo=pandas&logoColor=white">
-	<img src="https://img.shields.io/badge/blazor-9780E5?style=flat&logo=blazor&logoColor=white">
-</blockquote>
-<h4>
-	⠀⠀socials
-</h4>
-<blockquote>
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/header-dark.svg"><img src="assets/header-light.svg" width="640" alt="Gauthier — French, 22 years old, studying at 42 Paris"></picture>
 
-[![LinkedIn](https://img.shields.io/badge/linkedin-0077B5?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/gauthiergalon/)
-[![LeetCode](https://img.shields.io/badge/-leetcode-FFA116?style=flat&logo=LeetCode&logoColor=black)](https://leetcode.com/gogolescargot/)
-</blockquote>
-<h4>
-	⠀⠀contact
-</h4>
-<blockquote>
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/skills-dark.svg"><img src="assets/skills-light.svg" width="640" alt="Languages: C, C++, Rust, C#, Python, PHP, HTML, CSS, JavaScript, TypeScript, SQL, NoSQL. Data: PostgreSQL, MySQL, SQL Server, MongoDB, Snowflake, Airbyte, dbt, Kestra, OpenMetadata. Ops: Git, GitHub Actions, Azure, Docker, Kubernetes, Grafana. AI: Claude Code, MCP, machine learning, custom skills, custom plugins, RAG."></picture>
 
-[![Mail](https://img.shields.io/badge/-mail-1577CF?style=flat&logo=ThunderBird&logoColor=white)](mailto:gauthiergalon@proton.me)
-</blockquote>
+<a href="https://www.linkedin.com/in/gauthiergalon/"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/links/linkedin-dark.svg"><img src="assets/links/linkedin-light.svg" width="160" alt="LinkedIn"></picture></a><a href="https://leetcode.com/gogolescargot/"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/links/leetcode-dark.svg"><img src="assets/links/leetcode-light.svg" width="160" alt="LeetCode"></picture></a><a href="mailto:gauthiergalon@proton.me"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/links/mail-dark.svg"><img src="assets/links/mail-light.svg" width="160" alt="Mail"></picture></a>
+
+<!-- The SVGs are generated: edit the data at the top of src/generate.py, then run `python3 src/generate.py`. -->

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="44" viewBox="0 0 160 44" role="img" aria-label="Mail">
+<title>Mail</title>
+<style>
+.g{transform:scaleX(0);animation:n .9s cubic-bezier(.7,0,.2,1) forwards}.l{transform:translateY(124px);animation:n .9s cubic-bezier(.2,.8,.2,1) forwards}
+.f{opacity:0;animation:f .7s cubic-bezier(.2,.8,.2,1) forwards}
+.q{transform-box:fill-box;transform-origin:center;transform:scale(0);animation:n .5s cubic-bezier(.3,1.5,.5,1) forwards,q 6s cubic-bezier(.7,0,.3,1) infinite}
+.a{animation:a 6s ease-in-out infinite}
+@keyframes n{to{transform:none}}
+@keyframes f{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes q{0%,82%{transform:rotate(0)}to{transform:rotate(90deg)}}
+@keyframes a{0%,84%,to{transform:none}92%{transform:translate(3px,-3px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.g,.l,.q{transform:none}.f{opacity:1}}
+</style>
+<defs><path id="b4d" d="M84 1490H530L908 568H925L1304 1490H1751V0H1398V916H1388L1028 10H804L447 919H435V0H84Z"/><path id="b61" d="M400 -20Q293 -20 210 16Q126 53 79 126Q32 199 32 310Q32 403 64 467Q97 531 154 571Q212 611 287 632Q362 654 447 660Q542 669 600 678Q658 687 684 706Q711 725 711 759V764Q711 819 673 850Q635 881 569 881Q498 881 456 850Q413 819 401 766L74 777Q88 879 148 960Q209 1040 316 1086Q422 1132 573 1132Q679 1132 769 1107Q859 1082 926 1034Q993 986 1030 917Q1067 848 1067 760V0H732V157H724Q693 99 647 60Q601 21 540 0Q478 -20 400 -20ZM509 214Q566 214 612 238Q659 261 686 302Q714 343 714 398V503Q699 495 678 488Q656 482 630 476Q604 470 578 466Q551 462 527 458Q476 451 440 434Q405 416 387 390Q369 364 369 327Q369 272 408 243Q447 214 509 214Z"/><path id="b69" d="M84 0V1118H440V0ZM261 1246Q186 1246 132 1296Q78 1346 78 1417Q78 1488 132 1538Q186 1587 261 1587Q337 1587 390 1538Q444 1488 444 1417Q444 1346 390 1296Q337 1246 261 1246Z"/><path id="b6c" d="M440 1490V0H84V1490Z"/></defs>
+<g class="f" style="animation-delay:1.28s"><g transform="translate(0 30) scale(0.00977 -0.00977)" fill="#f0f3f6"><use href="#b4d" x="0"/><use href="#b61" x="1794.04"/><use href="#b69" x="2904.08"/><use href="#b6c" x="3387.12"/></g><g transform="translate(45.19 16)"><path class="a" style="animation-delay:4s" d="M0 12 12 0M2.5 0H12V9.5" fill="none" stroke="#6390e3" stroke-width="2.6"/></g></g>
+</svg>
