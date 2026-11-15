@@ -79,20 +79,27 @@ SKILLS = [
     ]),
 ]
 
-LINKS = ["LinkedIn", "LeetCode", "Mail"]      # -> assets/links/<name>-<theme>.svg, URLs live in README.md
+# (label, icon file, colour, colour on dark if it differs) -> assets/links/<label>-<theme>.svg
+# The URLs live in README.md.
+LINKS = [("LinkedIn", "linkedin", "#0a66c2", "#4d9be8"), ("Mail", "mail", None)]
 
 # The accent is #2a55a9; on GitHub's dark background that blue is too dim for small text,
 # so the dark variant uses a lighter tint of the same hue.
 THEMES = {
-    "light": {"fg": "#0a0a0a", "accent": "#2a55a9"},
-    "dark": {"fg": "#f0f3f6", "accent": "#6390e3"},
+    "light": {"fg": "#0a0a0a", "accent": "#2a55a9", "glow": 0.2},
+    "dark": {"fg": "#f0f3f6", "accent": "#6390e3", "glow": 0.26},
 }
+
+# Soft circles of the accent blue drifting slowly behind the content. False removes them.
+HALOS = True
 
 # ── layout ───────────────────────────────────────────────────────────────────
 
 W = 640                 # viewBox width; the README shows it at this width, not stretched
 COL = W / len(SKILLS)   # one grid column per skill category; the links sit on the same grid
-TEXT = 14               # small text size
+TEXT = 14               # small text size (header)
+SKILL = 16              # text size in the skills block
+RULE = 3                # thickness of every rule, in the header and around the skills
 LEAD = 20               # small text line height
 SHIFT = 0.0             # set by --at
 
@@ -141,9 +148,13 @@ CSS = """
 .f{opacity:0;animation:f .7s cubic-bezier(.2,.8,.2,1) forwards}
 .q{transform-box:fill-box;transform-origin:center;transform:scale(0);animation:n .5s cubic-bezier(.3,1.5,.5,1) forwards,q 6s cubic-bezier(.7,0,.3,1) infinite}
 .a{animation:a 6s ease-in-out infinite}
+.h{animation:h ease-in-out infinite alternate}
+.z{transform-box:fill-box;transform-origin:center;animation:z ease-in-out infinite alternate}
 @keyframes n{to{transform:none}}
 @keyframes f{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes q{0%,82%{transform:rotate(0)}to{transform:rotate(90deg)}}
+@keyframes h{from{transform:translate(calc(var(--dx)*-1),calc(var(--dy)*-1))}to{transform:translate(var(--dx),var(--dy))}}
+@keyframes z{from{transform:scale(.86)}to{transform:scale(1.16)}}
 @keyframes a{0%,84%,to{transform:none}92%{transform:translate(3px,-3px)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}.g,.l,.q{transform:none}.f{opacity:1}}
 """
@@ -177,6 +188,26 @@ class Sheet:
                 f"<title>{escape(label)}</title>\n<style>{CSS}</style>\n<defs>{glyphs}{defs}</defs>\n{body}\n</svg>\n")
 
 
+def halos(theme, spots):
+    """(defs, svg) for halos given as (cx, cy, radius, drift x, drift y, drift seconds, breathing seconds).
+
+    Each is a circle of the accent colour that fades to nothing at its edge, so nothing is
+    cut off where the image ends. It drifts back and forth and slowly swells and shrinks;
+    the two rhythms differ, so the motion never looks like a loop.
+    """
+    if not HALOS:
+        return "", ""
+    colour, peak = THEMES[theme]["accent"], THEMES[theme]["glow"]
+    defs = (f'<radialGradient id="halo"><stop offset="0" stop-color="{colour}" stop-opacity="{peak}"/>'
+            f'<stop offset="1" stop-color="{colour}" stop-opacity="0"/></radialGradient>')
+    body = ""
+    for i, (cx, cy, r, dx, dy, drift, breathe) in enumerate(spots):
+        body += (f'<g class="h" style="--dx:{dx}px;--dy:{dy}px;animation-duration:{drift}s;animation-delay:{at(-4 * i)}">'
+                 f'<circle class="z" cx="{num(cx)}" cy="{num(cy)}" r="{num(r)}" fill="url(#halo)" '
+                 f'style="animation-duration:{breathe}s;animation-delay:{at(-3 * i)}"/></g>')
+    return defs, f'<g class="f" style="animation-duration:2.5s;animation-delay:{at(0.2)}">{body}</g>'
+
+
 def rule(y, height, fill, t):
     """A full-width line that draws itself from the left at time t."""
     return f'<rect class="g" y="{num(y)}" width="{W}" height="{num(height)}" fill="{fill}" style="animation-delay:{at(t)}"/>'
@@ -191,7 +222,7 @@ def fade(content, t):
 def header(theme):
     fg, accent = THEMES[theme]["fg"], THEMES[theme]["accent"]
     sheet = Sheet()
-    out = rule(0, 6, fg, 0.1)
+    out = rule(0, RULE, fg, 0.1)
 
     # name: letters rise one by one from behind a mask, flush with the left edge
     size, base = 104, 100
@@ -214,7 +245,9 @@ def header(theme):
         out += fade(sheet.text(line, meta_x, y, TEXTFONT, TEXT, fg), 1.0 + i * 0.08)
 
     drop = 28                               # room under the baseline for descenders
-    defs = f'<clipPath id="name"><rect y="{base - 92}" width="{W}" height="{92 + drop}"/></clipPath>'
+    glow_defs, glow = halos(theme, [(230, (base + drop) / 2 + 2, 58, 150, 0, 15, 7)])
+    out = glow + out
+    defs = glow_defs + f'<clipPath id="name"><rect y="{base - 92}" width="{W}" height="{92 + drop}"/></clipPath>'
     return sheet.render(W, base + drop, f"{NAME} — {', '.join(META)}", out, defs)
 
 
@@ -223,45 +256,52 @@ def header(theme):
 def skills(theme):
     fg, accent = THEMES[theme]["fg"], THEMES[theme]["accent"]
     sheet = Sheet()
-    row, first, ico, gap = 23, 76, 15, 11   # row height, first item baseline, icon size, space between groups
+    row, first, ico, gap = 26, 88, 17, 12   # row height, first item baseline, icon size, space between groups
     cell, half = W / 2, W / 4               # categories sit two by two, each on two columns
-    out, top = rule(0, 1.5, fg, 0.2), 0
+    out, top = rule(0, RULE, fg, 0.2), 0
 
     for i in range(0, len(SKILLS), 2):
         depth = 0
         for c, (title, columns) in enumerate(SKILLS[i:i + 2]):
             x = c * cell
-            block = sheet.text(f"{i + c + 1:02d}", x, top + 25, BOLD, TEXT, accent)
-            block += sheet.text(title, x, top + 25 + LEAD, BOLD, TEXT, fg)
+            block = sheet.text(f"{i + c + 1:02d}", x, top + 30, BOLD, SKILL, accent)
+            block += sheet.text(title, x, top + 52, BOLD, SKILL, fg)
             for k, groups in enumerate(columns):
                 ix, y = x + k * half, top + first
                 for n, group in enumerate(groups):
                     y += gap if n else 0
                     for label, file, *colours in group:
                         colour = (colours[-1] if theme == "dark" else colours[0]) if ICON_COLOURS else None
-                        block += (f'<path transform="translate({num(ix)} {num(y - 5.1 - ico / 2)}) scale({ico / 24})" '
+                        block += (f'<path transform="translate({num(ix)} {num(y - 0.364 * SKILL - ico / 2)}) scale({ico / 24})" '
                                   f'fill="{colour or fg}" {icon(file)}/>')
-                        block += sheet.text(label, ix + ico + 9, y, TEXTFONT, TEXT, fg)
+                        block += sheet.text(label, ix + ico + 9, y, TEXTFONT, SKILL, fg)
                         y += row
                 depth = max(depth, y - row - top)
             out += fade(block, 0.5 + (i + c) * 0.09)
         top += depth + 20
 
-    out += rule(top, 1.5, fg, 0.9)
+    out += rule(top, RULE, fg, 0.9)
     label = " ".join(f"{title}: {', '.join(e[0] for groups in columns for group in groups for e in group)}."
                      for title, columns in SKILLS)
-    return sheet.render(W, top + 1.5, label, out)
+    h = top + RULE
+    glow_defs, glow = halos(theme, [(180, 0.32 * h, 150, 60, 40, 19, 8),
+                                    (450, 0.68 * h, 125, -70, -36, 23, 11)])
+    return sheet.render(W, h, label, glow + out, glow_defs)
 
 
 # ── links/<name>-<theme>.svg ─────────────────────────────────────────────────
 
-def link(label, theme, index):
+def link(label, file, colours, theme, index):
     fg, accent = THEMES[theme]["fg"], THEMES[theme]["accent"]
-    sheet, size, h = Sheet(), 20, 44
+    sheet, size, h, base, ico = Sheet(), 20, 36, 25, 18
     tracking = -0.02 * size
-    arrow_x = BOLD.width(label, size, tracking) + 7
-    body = fade(sheet.text(label, 0, 30, BOLD, size, fg, tracking)
-                + f'<g transform="translate({num(arrow_x)} 16)"><path class="a" style="animation-delay:{at(3 + index * 0.5)}" '
+    colour = (colours[-1] if theme == "dark" else colours[0]) if ICON_COLOURS else None
+    text_x = ico + 8
+    arrow_x = text_x + BOLD.width(label, size, tracking) + 7
+    body = fade(f'<path transform="translate(0 {num(base - 0.364 * size - ico / 2)}) scale({ico / 24})" '
+                f'fill="{colour or fg}" {icon(file)}/>'
+                + sheet.text(label, text_x, base, BOLD, size, fg, tracking)
+                + f'<g transform="translate({num(arrow_x)} {base - 14})"><path class="a" style="animation-delay:{at(3 + index * 0.5)}" '
                   f'd="M0 12 12 0M2.5 0H12V9.5" fill="none" stroke="{accent}" stroke-width="2.6"/></g>',
                 1.1 + index * 0.09)
     return sheet.render(COL, h, label, body)
@@ -282,8 +322,8 @@ def main():
     for theme in THEMES:
         files[f"header-{theme}.svg"] = header(theme)
         files[f"skills-{theme}.svg"] = skills(theme)
-        for i, label in enumerate(LINKS):
-            files[f"links/{label.lower()}-{theme}.svg"] = link(label, theme, i)
+        for i, (label, file, *colours) in enumerate(LINKS):
+            files[f"links/{label.lower()}-{theme}.svg"] = link(label, file, colours, theme, i)
     for name, content in files.items():
         path = args.out / name
         path.parent.mkdir(parents=True, exist_ok=True)
