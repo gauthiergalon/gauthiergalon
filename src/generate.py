@@ -46,7 +46,7 @@ META = [f"french, {age()}yo", "studying @ 42paris"]
 ICON_COLOURS = True
 
 # Each entry is (label, icon file in src/icons, colour, colour on dark if it differs);
-# a colour of None means "text colour".
+# a colour of None means "the accent blue", for icons that have no brand colour of their own.
 # A category is drawn on two columns; inside a column, each inner list is a group of
 # related entries, and groups are set apart by a little space.
 SKILLS = [
@@ -58,7 +58,7 @@ SKILLS = [
          [("sql", "sql", None), ("nosql", "nosql", None)]],
     ]),
     ("data", [
-        [[("postgres", "postgresql", "#4169e1", "#6f8ff0"), ("mysql", "mysql", "#4479a1", "#6ea4cc"),
+        [[("postgres", "postgresql", "#4169e1", "#6f8ff0"), ("mysql", "mysql", "#00618a", "#5aa7d0"),
           ("sql server", "microsoftsqlserver", "#cc2927", "#e8504e")],
          [("mongodb", "mongodb", "#47a248")],
          [("snowflake", "snowflake", "#29b5e8")]],
@@ -79,9 +79,7 @@ SKILLS = [
     ]),
 ]
 
-# (label, icon file, colour, colour on dark if it differs) -> assets/links/<label>-<theme>.svg
-# The URLs live in README.md.
-LINKS = [("LinkedIn", "linkedin", "#0a66c2", "#4d9be8"), ("Mail", "mail", None)]
+LINKS = ["LinkedIn", "Mail"]      # -> assets/links/<name>-<theme>.svg, URLs live in README.md
 
 # The accent is #2a55a9; on GitHub's dark background that blue is too dim for small text,
 # so the dark variant uses a lighter tint of the same hue.
@@ -114,10 +112,18 @@ def at(t):
 
 
 def icon(name):
-    """Path attributes of a 24×24 icon from src/icons (a few need the even-odd fill rule)."""
+    """Path attributes of a 24×24 icon from src/icons.
+
+    A few need the even-odd fill rule; a thin logo can ask to be thickened with a stroke-width.
+    """
     svg = (SRC / "icons" / f"{name}.svg").read_text()
-    d = re.search(r'\sd="([^"]+)"', svg).group(1)
-    return f'd="{d}"' + (' fill-rule="evenodd"' if 'fill-rule="evenodd"' in svg else "")
+    attrs = 'd="' + re.search(r'\sd="([^"]+)"', svg).group(1) + '"'
+    if 'fill-rule="evenodd"' in svg:
+        attrs += ' fill-rule="evenodd"'
+    bold = re.search(r'stroke-width="([^"]+)"', svg)
+    if bold:
+        attrs += f' stroke-width="{bold.group(1)}" stroke-linejoin="round"'
+    return attrs
 
 
 class Font:
@@ -245,7 +251,7 @@ def header(theme):
         out += fade(sheet.text(line, meta_x, y, TEXTFONT, TEXT, fg), 1.0 + i * 0.08)
 
     drop = 28                               # room under the baseline for descenders
-    glow_defs, glow = halos(theme, [(230, (base + drop) / 2 + 2, 58, 150, 0, 15, 7)])
+    glow_defs, glow = halos(theme, [(W - 140, (base + drop) / 2 + 2, 58, 70, 0, 15, 7)])
     out = glow + out
     defs = glow_defs + f'<clipPath id="name"><rect y="{base - 92}" width="{W}" height="{92 + drop}"/></clipPath>'
     return sheet.render(W, base + drop, f"{NAME} — {', '.join(META)}", out, defs)
@@ -272,8 +278,10 @@ def skills(theme):
                     y += gap if n else 0
                     for label, file, *colours in group:
                         colour = (colours[-1] if theme == "dark" else colours[0]) if ICON_COLOURS else None
+                        shape, paint = icon(file), colour or accent
+                        stroke = f' stroke="{paint}"' if "stroke-width" in shape else ""
                         block += (f'<path transform="translate({num(ix)} {num(y - 0.364 * SKILL - ico / 2)}) scale({ico / 24})" '
-                                  f'fill="{colour or fg}" {icon(file)}/>')
+                                  f'fill="{paint}"{stroke} {shape}/>')
                         block += sheet.text(label, ix + ico + 9, y, TEXTFONT, SKILL, fg)
                         y += row
                 depth = max(depth, y - row - top)
@@ -291,16 +299,12 @@ def skills(theme):
 
 # ── links/<name>-<theme>.svg ─────────────────────────────────────────────────
 
-def link(label, file, colours, theme, index):
+def link(label, theme, index):
     fg, accent = THEMES[theme]["fg"], THEMES[theme]["accent"]
-    sheet, size, h, base, ico = Sheet(), 20, 36, 25, 18
+    sheet, size, h, base = Sheet(), 20, 36, 25
     tracking = -0.02 * size
-    colour = (colours[-1] if theme == "dark" else colours[0]) if ICON_COLOURS else None
-    text_x = ico + 8
-    arrow_x = text_x + BOLD.width(label, size, tracking) + 7
-    body = fade(f'<path transform="translate(0 {num(base - 0.364 * size - ico / 2)}) scale({ico / 24})" '
-                f'fill="{colour or fg}" {icon(file)}/>'
-                + sheet.text(label, text_x, base, BOLD, size, fg, tracking)
+    arrow_x = BOLD.width(label, size, tracking) + 7
+    body = fade(sheet.text(label, 0, base, BOLD, size, fg, tracking)
                 + f'<g transform="translate({num(arrow_x)} {base - 14})"><path class="a" style="animation-delay:{at(3 + index * 0.5)}" '
                   f'd="M0 12 12 0M2.5 0H12V9.5" fill="none" stroke="{accent}" stroke-width="2.6"/></g>',
                 1.1 + index * 0.09)
@@ -322,8 +326,8 @@ def main():
     for theme in THEMES:
         files[f"header-{theme}.svg"] = header(theme)
         files[f"skills-{theme}.svg"] = skills(theme)
-        for i, (label, file, *colours) in enumerate(LINKS):
-            files[f"links/{label.lower()}-{theme}.svg"] = link(label, file, colours, theme, i)
+        for i, label in enumerate(LINKS):
+            files[f"links/{label.lower()}-{theme}.svg"] = link(label, theme, i)
     for name, content in files.items():
         path = args.out / name
         path.parent.mkdir(parents=True, exist_ok=True)
